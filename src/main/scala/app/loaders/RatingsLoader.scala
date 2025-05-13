@@ -2,6 +2,7 @@ package app.loaders
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.storage.StorageLevel
 
 import java.io.File
 
@@ -19,5 +20,21 @@ class RatingsLoader(sc : SparkContext, path : String) extends Serializable {
    *
    * @return The RDD for the given ratings
    */
-  def load() : RDD[(Int, Int, Option[Double], Double, Int)] = ???
+  def load() : RDD[(Int, Int, Option[Double], Double, Int)] = {
+
+    // Need to return:
+    val allRatingsPath = getClass.getResource(path).getPath
+    val allRatings = sc.textFile(allRatingsPath)
+    val sep = '|'
+
+    val rddFinal = allRatings.map({ rdd =>
+      val line = rdd.replace("\"", "").split("\\|")
+      
+      val ret = (line(0).toInt, line(1).toInt, Option.empty[Double], line(2).toDouble, line(3).toInt)
+      ret
+    })
+
+    rddFinal.persist(StorageLevel.MEMORY_ONLY)
+    rddFinal
+  }
 }
