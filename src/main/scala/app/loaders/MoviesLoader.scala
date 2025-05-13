@@ -1,5 +1,6 @@
 package app.loaders
 
+import breeze.io.CSVReader
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
@@ -19,6 +20,24 @@ class MoviesLoader(sc: SparkContext, path: String) extends Serializable {
    *
    * @return The RDD for the given titles
    */
-  def load(): RDD[(Int, String, List[String])] = ???
+  def load(): RDD[(Int, String, List[String])] = {
+
+    // ID,
+    val allMovies = sc.textFile(path)
+    val sep = '|'
+
+    allMovies.map( { rdd =>
+
+      val line = rdd.mkString.split("\\|")
+      (line(0).toInt, line(1), line.drop(2).toList)
+
+//      val ret = rdd.lines().map(line =>
+//        val lineTuple = line.split("\\|")
+//        (lineTuple(0), lineTuple(1), lineTuple.drop(2)))
+//
+//      ret.toList
+
+    } )
+  }
 }
 
