@@ -101,21 +101,6 @@ class Aggregator(sc: SparkContext) extends Serializable {
    */
   def updateResult(delta_ : Array[(Int, Int, Option[Double], Double, Int)]): Unit = {
 
-//    println("-----------------------------------------Updating----------------------------------------------\n")
-//
-//    // Filter out dupes
-//    delta_.foreach{ info =>
-//
-//      var infoCnt = 0
-//      delta_.foreach{ info2 =>
-//        if info2._1 == info._1 && info2._2 == info._2 then infoCnt += 1
-//      }
-//
-//      if infoCnt > 1 then println(f"Found $infoCnt ratings for rating\n$info")
-//    }
-//
-//    println("------------------------------------------------------------------------------------------------\n")
-
     val delta = sc.parallelize(delta_, partitioner.numPartitions)
     val deltaByKey = delta.map{case(_, mvID, oldRt, rt, _) => (mvID, (oldRt, rt))}.partitionBy(partitioner)
 
