@@ -21,7 +21,7 @@ class LSHIndex(data: RDD[(Int, String, List[String])], seed : IndexedSeq[Int]) e
     val buckets = bucketedData.aggregateByKey(List.empty[(Int, String, List[String])])(
       { (acc, v) => v :: acc }, { (ls1, ls2) => ls1 ::: ls2 })
 
-    // Step 1: (bucket, (mvID, mvName, genres)
+    // Step 1: (bucket, List((mvID, mvName, genres), ...)
     data.partitioner match
       case Some(partitioner) => buckets.partitionBy(partitioner)
       case None => buckets

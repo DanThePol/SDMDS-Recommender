@@ -18,9 +18,12 @@ class NNLookup(lshIndex: LSHIndex) extends Serializable {
   def lookup(queries: RDD[List[String]])
   : RDD[(List[String], List[(Int, String, List[String])])] = {
 
+    // buckets = (bucket, List((mvID, mvName, genres), ...))
     val buckets = lshIndex.getBuckets()
+    // (bucket, List(queryN, ...)
     val bucketedQueries = lshIndex.hash(queries)
 
+    // (bucket, (List(queryN, ...), List((mvID, mvName, genres), ...)))
     bucketedQueries.leftOuterJoin(buckets).mapValues{
       case (query, Some(ls)) => (query, ls)
       case (query, None) => (query, List.empty[(Int, String, List[String])])
