@@ -21,13 +21,14 @@ class CollaborativeFiltering(rank: Int,
       rank = rank,
       iterations = maxIterations,
       lambda = regularizationParameter,
-      blocks = n_parallel, // TODO
+      blocks = n_parallel,
       seed = seed
     )
   }
 
   def predict(userId: Int, movieIds: RDD[Int]): RDD[(Int, Double)] = {
-    movieIds.map(mvID => (mvID, model.predict(userId, mvID)))
+    val usrMvs = movieIds.map(movieId => (userId, movieId))
+    model.predict(usrMvs).map(rating => (rating.product, rating.rating))
   }
 
 }
