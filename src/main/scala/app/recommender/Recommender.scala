@@ -33,13 +33,13 @@ class Recommender(sc: SparkContext, index: LSHIndex, ratings: RDD[(Int, Int, Opt
 
     // lookup(genreRDD) = ((List(queryN, ...), List((mvID, mvName, genres), ...))
     // moviesToPred = all movie IDs returned by lookup that have not been watched by user userId
-    val moviesToPred = nn_lookup.lookup(queries = genreRDD).map{
-      case (queries, List((mvID, mvName, genres))) => mvID }.filter(!watchedByUsr.contains(_))
+    val moviesToPred = nn_lookup.lookup(queries = genreRDD)
+      .flatMap { case (_, ls) => ls }.map{ case (mvID, _, _) => mvID }.filter(!watchedByUsr.contains(_))
 
     baselinePredictor.predict(userId = userId, movieIds = moviesToPred)
-      .sortBy(pred => pred._2).take(K).toList
+      .sortBy(pred => -pred._2).take(K).toList
   }
-
+  
   /**
    * The same as recommendBaseline, but using the CollaborativeFiltering predictor
    */
@@ -50,11 +50,10 @@ class Recommender(sc: SparkContext, index: LSHIndex, ratings: RDD[(Int, Int, Opt
 
     // lookup(genreRDD) = ((List(queryN, ...), List((mvID, mvName, genres), ...))
     // moviesToPred = all movie IDs returned by lookup that have not been watched by user userId
-    val moviesToPred = nn_lookup.lookup(queries = genreRDD).map {
-      case (queries, List((mvID, mvName, genres))) => mvID
-    }.filter(!watchedByUsr.contains(_))
+    val moviesToPred = nn_lookup.lookup(queries = genreRDD)
+      .flatMap { case (_, ls) => ls }.map{ case (mvID, _, _) => mvID }.filter(!watchedByUsr.contains(_))
 
     collaborativePredictor.predict(userId = userId, movieIds = moviesToPred)
-      .sortBy(pred => pred._2).take(K).toList
+      .sortBy(pred => -pred._2).take(K).toList
   }
 }
