@@ -1,6 +1,6 @@
 # SDMDS-Recommender
 
-A scalable movie recommender system built with **Apache Spark** and **Scala 3**. The system loads movie and ratings datasets, computes aggregated statistics, and produces personalized recommendations using three different approaches: a baseline predictor, collaborative filtering (ALS), and Locality-Sensitive Hashing (LSH) for genre-based nearest-neighbor lookup.
+A scalable movie recommender system built with **Apache Spark** and **Scala 3**. The system loads movie and ratings datasets, computes aggregated statistics, and produces personalized recommendations using two different approaches: a baseline predictor and collaborative filtering (ALS), which both use Locality-Sensitive Hashing (LSH) for genre-based nearest-neighbor lookup.
 
 ---
 
